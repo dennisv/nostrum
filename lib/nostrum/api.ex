@@ -565,8 +565,11 @@ defmodule Nostrum.Api do
   def get_reactions(channel_id, message_id, %Emoji{} = emoji),
     do: get_reactions(channel_id, message_id, Emoji.api_name(emoji))
 
-  def get_reactions(channel_id, message_id, emoji_api_name) do
-    request(:get, Constants.channel_reactions_get(channel_id, message_id, emoji_api_name))
+  def get_reactions(channel_id, message_id, emoji_api_name, options) when is_list(options),
+    do: get_reactions(channel_id, message_id, emoji_api_name, Map.new(options))
+
+  def get_reactions(channel_id, message_id, emoji_api_name, %{} = options) do
+    request(:get, Constants.channel_reactions_get(channel_id, message_id, emoji_api_name), "", params: options)
     |> handle_request_with_decode({:list, {:struct, User}})
   end
 
